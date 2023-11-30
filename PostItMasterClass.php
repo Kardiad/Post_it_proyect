@@ -163,9 +163,9 @@ class PostItManager {
      * where you can write, resize it, move it or... make more notes!!!
      */
     public function insertNote(int $user){
-        $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $user, 300);
+        $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $user, 300, 0, 0);
         if($this->dbtype === 'PDO'){
-            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user) VALUES (:header , :innertext, :size , :user)');
+            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user, x , y) VALUES (:header , :innertext, :size , :user, :x, :y)');
             foreach($firstNote->getAll() as $key=>$value){                
                 if($key!='id'){
                     $stmt->bindValue(':'.$key, $value, $this->pdoMap[$key]);

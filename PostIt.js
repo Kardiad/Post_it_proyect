@@ -1,5 +1,6 @@
 console.log(window)
 window.addEventListener("DOMContentLoaded", (ev)=>{
+    const url = window.location.href;
     const osberver =  new MutationObserver((ev)=>{
         /**
          * Misiones del observer: 
@@ -57,7 +58,11 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             }
     
             async function add(e){
-                const conn = await fetch('');
+                const conn = await fetch(url+'/addNote');
+                const json = conn.json();
+                if(json.status == 200){
+                    window.location.reload();
+                }
             }
             // Agregamos los eventos al elemento
            post.addEventListener('mousedown', startDrag);
