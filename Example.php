@@ -8,12 +8,16 @@ $url_divider = explode('/', $_SERVER['PHP_SELF']);
 $action = $url_divider[count($url_divider)-1];
 switch($action){
     case 'addNote':
-        $posit->insertNote(1);
-        echo json_encode(['status'=>200]);
+        $posit->insertNote();
+        header('Content-Type: text/plain');
+        echo json_encode(['status'=>200, 'postitjson'=>$posit->jsonMode(), 'postithtml'=>$posit->generatePostIt(false)]);
         exit;
     case 'removeNote':
         $posit->deleteNote(intval($_POST['id']));
-        echo json_encode(['status'=>200]);
+        header('Content-Type: text/plain');
+        echo json_encode(['status'=>200, 'postit'=>$posit->jsonMode(), 'postithtml'=>$posit->generatePostIt(false)]);
+        exit;
+        
 }
 ?>
 <!DOCTYPE html>
@@ -26,6 +30,6 @@ switch($action){
     <?php $posit->generateJS() ?>
 </head>
 <body>
-    <?php $posit->generatePostIt() ?>
+    <?php $posit->generatePostIt(true) ?>
 </body>
 </html>

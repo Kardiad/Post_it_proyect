@@ -6,4 +6,4 @@ create table post_it(
     x int,
     y int,
     user int unsigned
-);
+)ENGINE=InnoDB,COLLATE=utf8mb4_unicode_ci;

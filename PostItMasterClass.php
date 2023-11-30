@@ -4,6 +4,7 @@ include_once './ObjectPostIt.php';
  * ==================================================================================
  *                               STICKY NOTES BY 
  *                               @author Jafet Núñez  
+ *                               VERSION HISTORIAL
  * ==================================================================================
  * Legend of naming versioning : LTS.things added.fix            
  *                                  
@@ -16,7 +17,14 @@ include_once './ObjectPostIt.php';
  *      + Button can add a new note refreshing navigator.
  * @version 1.2.1
  *      Bin button can remove a note and it apears in diferents notes than first one
- * @version 
+ * @version 1.2.2
+ *      Fix table admits emojis
+ * @version 1.3.2
+ *      Implemented ajax reload when you add a note and remove it
+ * @version 1.3.2 (1/2)
+ *      Observer in JavaScript recognizes h4 and p inside notes
+ * @version 1.3.3 (1/2)
+ *      Improve security in delete notes, now recognizes the true owner of this
  * ==================================================================================
  * 
  */
@@ -39,16 +47,27 @@ class PostItManager {
     
     private PDO | mysqli $db;
 
-    private string $mysqlMap = 'ssdd';
+    private array $mysqlMap = [
+        'header' => 's',
+        'innertext' => 's',
+        'size' => 'd',
+        'user' => 'd',
+        'x' => 'd',
+        'y' => 'd'
+    ];
 
     private array $pdoMap = [
         'header' => PDO::PARAM_STR,
         'innertext' => PDO::PARAM_STR,
         'size' => PDO::PARAM_INT,
-        'user' => PDO::PARAM_INT
+        'user' => PDO::PARAM_INT,
+        'x' => PDO::PARAM_INT,
+        'y' => PDO::PARAM_INT
     ];
 
     private string $dbtype;
+
+    private int $user;
 
     /**
      * @method void __construct() 
@@ -57,17 +76,18 @@ class PostItManager {
      * @param int $user id of the user that use the notes.
      */
     public function __construct(PDO | mysqli $db = null, string $database = null, int $user) {
+        $this->user = $user;
         if($db == null || $database == null){
             die('Refused connection, you need make a database connection with PDO or mysqli and set a database name to insert PostIt data');
         }else{
             $this->db = $db;
             $this->database = $database;
         }
-        if($this->testDB()<0){
+        if($this->testDB()==0){
             $this->createTable();
         }
-        if($this->userHasNote($user)==0){           
-            $this->insertNote($user);
+        if($this->userHasNote()==0){           
+            $this->insertNote();
         }
     }
 
@@ -75,17 +95,18 @@ class PostItManager {
      * @method void userHasNote() this method validate how much notes have an user
      * @param int $user this is the id of the user in database.
      */
-    private function userHasNote(int $user){
+    private function userHasNote(){
+        $this->postItList = [];
         if($this->dbtype === 'PDO'){            
             $stmt = $this->db->prepare('SELECT * from post_it WHERE user = :id');
-            $stmt->bindValue(':id', $user, PDO::PARAM_INT);
+            $stmt->bindValue(':id', $this->user, PDO::PARAM_INT);
             $stmt->execute();
             $this->postItList = $stmt->fetchAll(PDO::FETCH_OBJ);
         }
         if($this->dbtype === 'mysqli'){
             $stmt = $this->db->stmt_init();
             $stmt = $this->db->prepare('SELECT * from post_it WHERE user = ?');
-            $stmt->bind_param('d', $user);
+            $stmt->bind_param('d', $this->user);
             $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_object()){
@@ -103,14 +124,8 @@ class PostItManager {
      */
     private function createTable(){
         try{
-            if($this->dbtype === 'PDO'){
-                $sql = file_get_contents('./createtable.sql');
-                $this->db->query($sql);
-            }   
-            if($this->dbtype === 'mysqli'){
-                $sql = file_get_contents('./createtable.sql');
-                $this->db->query($sql);
-            }
+            $sql = file_get_contents('./createtable.sql');
+            $this->db->query($sql);
         }catch(Exception $e){
             throw $e;
         }
@@ -149,10 +164,11 @@ class PostItManager {
     /**
      *  @method void generatePostIt() a way to display all notes that an user have.
      */
-    public function generatePostIt(){
+    public function generatePostIt(bool $backrender){
+        $html = '';
         if(!empty($this->postItList)){
             foreach($this->postItList as $k=>$post){
-                $this->generateHTML($post, $k);
+                $html.= $this->generateHTML($post, $k, $backrender);
             }
         }else{
             echo "<script> 
@@ -161,14 +177,15 @@ class PostItManager {
                 })
             </script>";
         }
+        if($html!='')return $html;
     }
 
     /**
      * @method void insertNote() once you have the database created you need a note, for this reason this method makes you your first note
      * where you can write, resize it, move it or... make more notes!!!
      */
-    public function insertNote(int $user){
-        $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $user, 300, 0, 0);
+    public function insertNote(){
+        $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $this->user, 300, 0, 0);
         if($this->dbtype === 'PDO'){
             $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user, x , y) VALUES (:header , :innertext, :size , :user, :x, :y)');
             foreach($firstNote->getAll() as $key=>$value){                
@@ -180,19 +197,31 @@ class PostItManager {
         }
         if($this->dbtype === 'mysqli'){
             $stmt = $this->db->stmt_init();
-            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user) VALUES (?,?,?,?)');
+            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user, x, y) VALUES (?,?,?,?,?,?)');
             $params = $firstNote->getAll();
-            $stmt->bind_param($this->mysqlMap, $params['header'], $params['innertext'], $params['size'], $params['user']);
+            $stmt->bind_param($this->mysqlMapCalculator($params), $params['header'], $params['innertext'], $params['size'], $params['user'], $params['x'], $params['y']);
             $stmt->execute();
         }
+        $this->userHasNote();
+    }
+
+
+    private function mysqlMapCalculator(array $params):string{
+        $map_return = '';
+        foreach(array_keys($params) as $map){
+            if($map!='id'){
+                $map_return.=$this->mysqlMap[$map];
+            }
+        }
+        return $map_return;
     }
 
     /**
      *  @method void generateHTML() the template
      */
-    public function generateHTML($postIt, int $k){
+    public function generateHTML($postIt, int $k, bool $backRender){
         $firstNote = ($k!=0)?'<p class="delete">Bin</p>':'';
-        echo 
+        $html = 
         '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" data-move="false"
         style="top: '.$postIt->y.'px; left:'.$postIt->x.'px; z-index:'.($postIt->id*1000).'">
             <div class="post-it-window">
@@ -206,6 +235,11 @@ class PostItManager {
                 <p contenteditable="true"> '.$postIt->innertext.' </p>
             </div>
         </div>';
+        if($backRender){
+            echo $html;
+        }else{
+            return $html;
+        }
     }
     /**
      *  @method void updateNote() a method that allows you modify the notes
@@ -215,29 +249,33 @@ class PostItManager {
          * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
          */
     }
-    public function deleteNote(int $id):void{
+    public function deleteNote(int $id_note):void{
         /**
          * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
          */
-        if($this->dbtype === 'PDO'){
+        if($this->dbtype === 'PDO' && $this->validateNote($id_note)){
             $stmt = $this->db->prepare('DELETE FROM post_it where id = :id ');
-            $stmt->bindValue(':id', $id, $this->pdoMap['id']);
+            $stmt->bindValue(':id', $id_note, $this->pdoMap['id']);
             $stmt->execute();
         }
-        if($this->dbtype === 'mysqli'){
+        if($this->dbtype === 'mysqli' && $this->validateNote($id_note)){
             $stmt = $this->db->stmt_init();
             $stmt = $this->db->prepare('DELETE FROM post_it where id = ? ');
-            $stmt->bind_param('s', $id);
+            $stmt->bind_param('s', $id_note);
             $stmt->execute();
         }
-        
+        $this->userHasNote();
+    }
+
+    private function validateNote(int $id_note):bool {
+        return count(array_filter($this->postItList, fn($e)=>$e->id == $id_note))>0;
     }
 
     /**
      * @method void jsonMode() a convenient way to get all notes of an user in a json
      */
-    public function jsonMode():void{
-        echo json_encode($this->postItList);
+    public function jsonMode():string{
+        return json_encode($this->postItList);
     }
 
 }

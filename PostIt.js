@@ -1,7 +1,8 @@
-console.log(window)
+
 window.addEventListener("DOMContentLoaded", (ev)=>{
     const url = window.location.href;
     const osberver =  new MutationObserver((ev)=>{
+        
         /**
          * Misiones del observer: 
          *  1º Ajustar la altura del elemento html al 
@@ -12,10 +13,21 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
          *  4º Mandar el texto de la nota
          * 
          */      
-        console.log(ev[0])
         //if(ev[0].type == "characterData")
+        for(let e of ev){
+            if(e.type == "characterData" && e.target!="\"\"" && e.target.parentNode!=null && e.target.parentNode.tagName=='H4'){
+                const text = e.target;
+                const id = e.target.parentElement.parentElement.parentElement.dataset.id;
+                console.log(id);
+                const body = new FormData();
+                body.append('header', text);
+                body.append('id', id);
+                
+            }
+        }
       })                                  
     const posts = document.querySelectorAll('.post-it-window');
+    const postsContainer = document.querySelector('.post-it').parentElement;
         /**
          * Eventos que faltan por tratar:
          *  1º Paredes, es decir, que no se salga de las paredes establecidas
@@ -60,7 +72,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
     
             async function add(e){
                 const conn = await fetch(url+'/addNote');
-                const json = conn.json();
+                const json = await conn.json();
                 if(json.status == 200){
                     window.location.reload();
                 }
@@ -69,13 +81,14 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 console.log(url)
                 const form = new FormData();
                 form.append('id', post.parentElement.dataset.id);
+                console.log(post.parentElement.dataset.id);
                 const conn = await fetch(url+'/removeNote',{
                     method: "POST",
                     body: form
                 });
-                const json = conn.json();
+                const json = await conn.json();
                 if(json.status == 200){
-                    window.location.reload();
+                    window.location.reload();                    
                 }
             }
             // Agregamos los eventos al elemento
