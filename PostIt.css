@@ -25,9 +25,9 @@ body{
     margin: auto;
     padding: 1rem;
 }
-.post-it .close, .post-it .minimize, .post-it .add {
+.post-it .close, .post-it .minimize, .post-it .add, .post-it .delete {
     cursor: pointer;
-    padding: 3px;
+    padding: 7px;
     margin: 0px;
 }
 .post-it::-webkit-scrollbar {

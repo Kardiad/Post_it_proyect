@@ -12,7 +12,8 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
          *  4º Mandar el texto de la nota
          * 
          */      
-        //console.log(ev[0])
+        console.log(ev[0])
+        //if(ev[0].type == "characterData")
       })                                  
     const posts = document.querySelectorAll('.post-it-window');
         /**
@@ -64,13 +65,33 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     window.location.reload();
                 }
             }
+            async function remove(e){
+                console.log(url)
+                const form = new FormData();
+                form.append('id', post.parentElement.dataset.id);
+                const conn = await fetch(url+'/removeNote',{
+                    method: "POST",
+                    body: form
+                });
+                const json = conn.json();
+                if(json.status == 200){
+                    window.location.reload();
+                }
+            }
             // Agregamos los eventos al elemento
            post.addEventListener('mousedown', startDrag);
            window.addEventListener('mouseup', stopDrag);
            window.addEventListener('mousemove', drag);
-           post.children[0].addEventListener('click', add);
-           post.children[2].addEventListener('click', close);
-           post.children[1].addEventListener('click', minimize);
+           if(post.children.length == 4){
+            post.children[0].addEventListener('click', remove);
+            post.children[1].addEventListener('click', add);
+            post.children[3].addEventListener('click', close);
+            post.children[2].addEventListener('click', minimize);
+           }else{
+               post.children[0].addEventListener('click', add);
+               post.children[2].addEventListener('click', close);
+               post.children[1].addEventListener('click', minimize);
+           }
             //Damos de alta a los elementos en el observer
             osberver.observe(post.parentElement, {
                 attributes: true,
@@ -79,7 +100,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 subtree : true,
                 attributeOldValue : true,
                 characterDataOldValue : true,
-                attributeFilter : ['style', 'innerText', 'nodeText'],
+                attributeFilter : ['tagName','style', 'innerText', 'nodeText'],
             });
         }
     })  

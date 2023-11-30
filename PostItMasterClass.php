@@ -12,6 +12,11 @@ include_once './ObjectPostIt.php';
  * @version 1.0.1
  *      JS Movement fixed, now you can move all notes where you want, and stare in
  *      their site.
+ * @version 1.1.1
+ *      + Button can add a new note refreshing navigator.
+ * @version 1.2.1
+ *      Bin button can remove a note and it apears in diferents notes than first one
+ * @version 
  * ==================================================================================
  * 
  */
@@ -146,13 +151,13 @@ class PostItManager {
      */
     public function generatePostIt(){
         if(!empty($this->postItList)){
-            foreach($this->postItList as $post){
-                $this->generateHTML($post);
+            foreach($this->postItList as $k=>$post){
+                $this->generateHTML($post, $k);
             }
         }else{
             echo "<script> 
                 window.addEventListener('DOMContentLoaded', ()=>{
-                    alert('Refresca la página, aparecerá tu primera nota') 
+                    window.location.reload()
                 })
             </script>";
         }
@@ -185,11 +190,13 @@ class PostItManager {
     /**
      *  @method void generateHTML() the template
      */
-    public function generateHTML($postIt){
+    public function generateHTML($postIt, int $k){
+        $firstNote = ($k!=0)?'<p class="delete">Bin</p>':'';
         echo 
         '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" data-move="false"
         style="top: '.$postIt->y.'px; left:'.$postIt->x.'px; z-index:'.($postIt->id*1000).'">
             <div class="post-it-window">
+                '.$firstNote.'
                 <p class="add">+</p>
                 <p class="minimize">-</p>
                 <p class="close">X</p>
@@ -207,6 +214,23 @@ class PostItManager {
         /**
          * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
          */
+    }
+    public function deleteNote(int $id):void{
+        /**
+         * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
+         */
+        if($this->dbtype === 'PDO'){
+            $stmt = $this->db->prepare('DELETE FROM post_it where id = :id ');
+            $stmt->bindValue(':id', $id, $this->pdoMap['id']);
+            $stmt->execute();
+        }
+        if($this->dbtype === 'mysqli'){
+            $stmt = $this->db->stmt_init();
+            $stmt = $this->db->prepare('DELETE FROM post_it where id = ? ');
+            $stmt->bind_param('s', $id);
+            $stmt->execute();
+        }
+        
     }
 
     /**

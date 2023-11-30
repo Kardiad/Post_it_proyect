@@ -11,6 +11,9 @@ switch($action){
         $posit->insertNote(1);
         echo json_encode(['status'=>200]);
         exit;
+    case 'removeNote':
+        $posit->deleteNote(intval($_POST['id']));
+        echo json_encode(['status'=>200]);
 }
 ?>
 <!DOCTYPE html>
