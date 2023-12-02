@@ -25,6 +25,15 @@ include_once './ObjectPostIt.php';
  *      Observer in JavaScript recognizes h4 and p inside notes
  * @version 1.3.3 (1/2)
  *      Improve security in delete notes, now recognizes the true owner of this
+ * @version 1.8.8 (2/2)
+ *      Seriously I don't know how call this version because I fixed a lot of things
+ *      Update in database for all fields
+ *      Fix table for styles now it is one field
+ *      Event loop in front end to optimize pull request and observable desing    
+ *      Table now admits emojis 😀
+ * @version 1.8.9 
+ *      Movemet is fixed at this frame, in other words, you can't move the note in other 
+ *      width and height that the window
  * ==================================================================================
  * 
  */
@@ -58,7 +67,7 @@ class PostItManager {
         'header' => PDO::PARAM_STR,
         'innertext' => PDO::PARAM_STR,
         'user' => PDO::PARAM_INT,
-        'styles' => PDO::PARAM_INT
+        'styles' => PDO::PARAM_STR
     ];
 
     private string $dbtype;
@@ -181,10 +190,10 @@ class PostItManager {
      * where you can write, resize it, move it or... make more notes!!!
      */
     public function insertNote(){
-        $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $this->user, 300, 0, 0);
+        $note = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $this->user, 300, 0, 0, count($this->postItList)+1);
         if($this->dbtype === 'PDO'){
             $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, styles, user) VALUES (:header , :innertext, :styles , :user)');
-            foreach($firstNote->getAll() as $key=>$value){                
+            foreach($note->getAll() as $key=>$value){
                 if($key!='id'){
                     $stmt->bindValue(':'.$key, $value, $this->pdoMap[$key]);
                 }
@@ -194,7 +203,7 @@ class PostItManager {
         if($this->dbtype === 'mysqli'){
             $stmt = $this->db->stmt_init();
             $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, user, styles) VALUES (?,?,?,?)');
-            $params = $firstNote->getAll();
+            $params = $note->getAll();
             $stmt->bind_param($this->mysqlMapCalculator($params), $params['header'], $params['innertext'], $params['user'], $params['styles']);
             $stmt->execute();
         }
@@ -218,12 +227,11 @@ class PostItManager {
      *  @method void generateHTML() the template
      */
     public function generateHTML($postIt, int $k, bool $backRender){
-        $firstNote = ($k!=0)?'<p class="delete">Bin</p>':'';
+        $note = ($k!=0)?'<p class="delete">Bin</p>':'';
         $html = 
-        '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" data-move="false"
-        style="'.$postIt->styles.'">
+        '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" style="'.$postIt->styles.'">
             <div class="post-it-window">
-                '.$firstNote.'
+                '.$note.'
                 <p class="add">+</p>
                 <p class="minimize">-</p>
                 <p class="close">X</p>
@@ -264,7 +272,7 @@ class PostItManager {
     public function deleteNote(int $id_note):void{
         if($this->dbtype === 'PDO' && $this->validateNote($id_note)){
             $stmt = $this->db->prepare('DELETE FROM post_it where id = :id ');
-            $stmt->bindValue(':id', $id_note, $this->pdoMap['id']);
+            $stmt->bindValue(':id', $id_note, PDO::PARAM_INT);
             $stmt->execute();
         }
         if($this->dbtype === 'mysqli' && $this->validateNote($id_note)){

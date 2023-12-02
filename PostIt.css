@@ -1,8 +1,5 @@
-body{
-    position: absolute;
-}
 .post-it{
-    position: relative;
+    position: absolute;
     width: 300px;
     height: 300px;
     border: 1px solid black;

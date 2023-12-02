@@ -1,7 +1,16 @@
 
 window.addEventListener("DOMContentLoaded", (ev)=>{
     const url = window.location.href;
+    const startlimitX = 0;
+    const startlimitY = 0;
+    let endlimitX = window.innerWidth;
+    let endlimitY =  window.innerHeight;
     let allEvents = [];
+    window.addEventListener('resize', ()=>{
+        endlimitX = window.innerWidth;
+        endlimitY = window.innerHeight;
+        console.log({endlimitX, endlimitY})
+    })
     /**
      * Event loop system
      */
@@ -13,15 +22,9 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             body.append('event', JSON.stringify(event))
             const conn = await fetch(url+'/editNote', {method: 'POST', body: body});
             console.log(await conn.json());
-            /*const conn = await fetch(url+'/editNote', {
-                method:'POST',
-                body: body
-            });
-            const json = await conn.json();
-            console.log(json);*/
             allEvents = [];
         }
-    }, 3000);
+    }, 1000);
     //Observer have one mission that is mdeling the data of every event which concerns at text, size and postion modification
     const osberver =  new MutationObserver((ev)=>{
         for(let e of ev){
@@ -55,14 +58,6 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             let startX = 0;
             let startY = 0;
             let isDragging = false;
-            function h4Update(e){
-                intervalPromise().then((res)=>{
-                    let finalText = allEvents.find((element)=>element.target == text);
-                    console.log(finalText.target);
-                    /*lastEventPromise(allEvents).then((res)=>{
-                    })*/
-                });
-            }
             function startDrag(e) {  
                 e.stopPropagation();
                 e.preventDefault();
@@ -76,10 +71,14 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 e.stopPropagation();
                 e.preventDefault();
                 if (isDragging) {
-                   x = e.clientX-startX-10;
-                   y = e.clientY-startY-10;
-                   post.parentElement.style.left = x+'px';
-                   post.parentElement.style.top = y+'px';                                  
+                    x = e.clientX-startX-10;
+                    y = e.clientY-startY-10;
+                    post.parentElement.style.left = x+'px';
+                    post.parentElement.style.top = y+'px';     
+                    if(x < startlimitX) post.parentElement.style.left = '0px';     
+                    if(y < startlimitY) post.parentElement.style.top = '0px';     
+                    if(x > endlimitX-post.parentElement.style.width.replace('px', '')) post.parentElement.style.left = endlimitX-parseInt(post.parentElement.style.width.replace('px', ''))+'px';     
+                    if(y > endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))) post.parentElement.style.top = endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))+'px';          
                 }
             }
             function stopDrag(e) { 
@@ -104,7 +103,6 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 }
             }
             async function remove(e){
-                console.log(url)
                 const form = new FormData();
                 form.append('id', post.parentElement.dataset.id);
                 console.log(post.parentElement.dataset.id);
@@ -117,7 +115,6 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     window.location.reload();                    
                 }
             }
-           
             // Events whose function is move the notes
            post.addEventListener('mousedown', startDrag);
            window.addEventListener('mouseup', stopDrag);

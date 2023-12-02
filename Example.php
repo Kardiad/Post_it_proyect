@@ -14,9 +14,7 @@ switch($action){
         exit;
     case 'removeNote':
         $posit->deleteNote(intval($_POST['id']));
-        header('Content-Type: text/plain');
-        echo json_encode(['status'=>200, 'postit'=>$posit->jsonMode(), 'postithtml'=>$posit->generatePostIt(false)]);
-        exit;
+        die(json_encode(['status'=>200, 'postit'=>$posit->jsonMode(), 'postithtml'=>$posit->generatePostIt(false)]));
     case 'editNote':
         $update_fields = array_filter(json_decode($_POST['event'], true), fn($e)=>$e!='');
         $posit->updateNote($update_fields);

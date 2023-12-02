@@ -7,12 +7,12 @@ class PostIt {
     private int $user;
     private string $styles;
     
-    public function __construct($id, $header, $text, $user, $size, $x, $y){
+    public function __construct($id, $header, $text, $user, $size, $x, $y, $zindex){
         $this->id = $id??0;
         $this->header = $header;
         $this->text = $text;
         $this->user = $user;
-        $this->styles = "width: $size; left:$x; top:$y;";
+        $this->styles = "z-index: ".(1000*$zindex)." ;width: $size; left:$x; top:$y;";
     }
     public function getId(): int {
         return $this->id;
