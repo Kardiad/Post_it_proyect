@@ -92,8 +92,8 @@ it's true you can get all html and if it is false you recive a JSON with all not
   
  ## Wishlist or objectives comming soon
   
-   1º Paste pressing ctr + v 
-   2º Options with rightclick
-       2.1 -> add images
-       2.2 -> paste text
-   3º Customize color or background    
+ - Paste pressing ctr + v 
+ - Options with rightclick
+     2.1 -> add images
+     2.2 -> paste text
+ - Customize color or background    
