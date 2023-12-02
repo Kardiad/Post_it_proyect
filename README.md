@@ -88,6 +88,8 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Table now admits emojis 😀
  - version 1.8.9 
        Movemet is fixed at frame, in other words, you can't move the over the window
+ - version 1.9.9 
+       Basic copy paste implements
   
  ## Wishlist or objectives comming soon
   
