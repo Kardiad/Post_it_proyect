@@ -7,7 +7,7 @@ This library is compatible with mysqli and PDO, but now only is compatible with 
 
 ## How to install
 
-In Example.php you have a example where you can read to operate with this library. But it you
+In Example.php you have a example where you can read how to operate with this library. But if you
 need an explanation I try to do it with my english skills 😂😂😂. First of all one thing that
 you need is a mysql database. In my case database calls 'test'
 
@@ -60,46 +60,38 @@ and finaly the last one make all html based in the list of all notes that you ha
 it's true you can get all html and if it is false you recive a JSON with all notes.
 
 ## Versioning
-
-
- ==================================================================================
-                               STICKY NOTES BY 
-                               @author Jafet Núñez  
-                               VERSION HISTORIAL
- ==================================================================================
+                               
  Legend of naming versioning : LTS.things added.fix            
                                    
-  @version 1.0.0
+ - version 1.0.0
        First release
-  @version 1.0.1
+ - version 1.0.1:
        JS Movement fixed, now you can move all notes where you want, and stare in
        their site.
-  @version 1.1.1
+ - version 1.1.1:
        + Button can add a new note refreshing navigator.
-  @version 1.2.1
+ - version 1.2.1:
        Bin button can remove a note and it apears in diferents notes than first one
-  @version 1.2.2
+ - version 1.2.2:
        Fix table admits emojis
-  @version 1.3.2
+ - version 1.3.2:
        Implemented ajax reload when you add a note and remove it
-  @version 1.3.2 (1/2)
+ - version 1.3.2 (1/2):
        Observer in JavaScript recognizes h4 and p inside notes
-  @version 1.3.3 (1/2)
-       Improve security in delete notes, now recognizes the true owner of this
-  @version 1.8.8 (2/2)
+ - version 1.3.3 (1/2):
+       Improve security in delete notes, now recognizes the true owner of notes
+ - version 1.8.8 (2/2):
        Seriously I don't know how call this version because I fixed a lot of things
        Update in database for all fields
        Fix table for styles now it is one field
        Event loop in front end to optimize pull request and observable desing    
        Table now admits emojis 😀
-  @version 1.8.9 
-       Movemet is fixed at this frame, in other words, you can't move the note in other 
-       width and height that the window
-  ==================================================================================
-                                       WISHLIST
-  ==================================================================================
-   1º Paste pressing ctr + v 
-   2º Options with rightclick
-       2.1 -> add images
-       2.2 -> paste text
-   3º Customize color or background    
+ - version 1.8.9 
+       Movemet is fixed at frame, in other words, you can't move the over the window
+  
+ ## Wishlist or objectives comming soon
+  
+ - Paste pressing ctr + v 
+ - Options with rightclick
+ - add images
+ - Customize color or background    
