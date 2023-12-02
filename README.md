@@ -90,7 +90,7 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Movemet is fixed at this frame, in other words, you can't move the note in other 
        width and height that the window
   
-###WISHLIST
+ ##WISHLIST
   
    1º Paste pressing ctr + v 
    2º Options with rightclick
