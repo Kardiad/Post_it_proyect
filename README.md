@@ -94,6 +94,6 @@ it's true you can get all html and if it is false you recive a JSON with all not
   
  - Paste pressing ctr + v 
  - Options with rightclick
-     2.1 -> add images
-     2.2 -> paste text
+ - add images
+ - paste text
  - Customize color or background    
