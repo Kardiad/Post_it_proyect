@@ -87,8 +87,7 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Event loop in front end to optimize pull request and observable desing    
        Table now admits emojis 😀
  - version 1.8.9 
-       Movemet is fixed at this frame, in other words, you can't move the note in other 
-       width and height that the window
+       Movemet is fixed at frame, in other words, you can't move the over the window
   
  ## Wishlist or objectives comming soon
   
