@@ -20,8 +20,9 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             const event = allEvents.pop();
             const body = new FormData();
             body.append('event', JSON.stringify(event))
-            const conn = await fetch(url+'/editNote', {method: 'POST', body: body});
-            console.log(await conn.json());
+            await fetch(url+'/editNote', {method: 'POST', body: body}).catch(err=>{
+                console.error(err); 
+                allEvents=[]});
             allEvents = [];
         }
     }, 1000);
@@ -88,7 +89,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             }
     
             function minimize (ev) {
-                ev.target.parentElement.parentElement.style.height = '1rem';
+                ev.target.parentElement.parentElement.style.height = '1.5rem';
             }
     
             function close (ev) {

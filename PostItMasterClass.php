@@ -35,7 +35,13 @@ include_once './ObjectPostIt.php';
  *      Movemet is fixed at this frame, in other words, you can't move the note in other 
  *      width and height that the window
  * ==================================================================================
- * 
+ *                                      WISHLIST
+ * ==================================================================================
+ *  1º Paste pressing ctr + v 
+ *  2º Options with rightclick
+ *      2.1 -> add images
+ *      2.2 -> paste text
+ *  3º Customize color or background    
  */
 
 /**

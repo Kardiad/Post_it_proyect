@@ -22,7 +22,9 @@
     margin: auto;
     padding: 1rem;
 }
-.post-it .close, .post-it .minimize, .post-it .add, .post-it .delete {
+
+.post-it .close, .post-it .minimize, .post-it .add, .post-it .delete, .post-it .color {
+    width: 1rem;
     cursor: pointer;
     padding: 7px;
     margin: 0px;
