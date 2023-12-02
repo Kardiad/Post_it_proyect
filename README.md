@@ -9,8 +9,8 @@ This library is compatible with mysqli and PDO, but now only is compatible with 
 In Example.php you have a example where you can read to operate with this library. But it you
 need an explanation I try to do it with my english skills 😂😂😂. First of all one thing that
 you need is a mysql database. In my case database calls 'test'
-
+```
   $connexion =  new PDO("mysql:host=localhost;dbname=test;port=3306;charset=utf8mb4", "root" , "");
   $connexion2 = new mysqli('localhost', 'root', '', 'test', 3306);
-
+```
 
