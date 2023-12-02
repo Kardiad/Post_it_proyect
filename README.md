@@ -7,7 +7,7 @@ This library is compatible with mysqli and PDO, but now only is compatible with 
 
 ## How to install
 
-In Example.php you have a example where you can read to operate with this library. But it you
+In Example.php you have a example where you can read how to operate with this library. But if you
 need an explanation I try to do it with my english skills 😂😂😂. First of all one thing that
 you need is a mysql database. In my case database calls 'test'
 
