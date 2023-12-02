@@ -81,11 +81,11 @@ it's true you can get all html and if it is false you recive a JSON with all not
  - version 1.3.3 (1/2)
        Improve security in delete notes, now recognizes the true owner of notes
  - version 1.8.8 (2/2)
-       Seriously I don't know how call this version because I fixed a lot of things
-       Update in database for all fields
-       Fix table for styles now it is one field
-       Event loop in front end to optimize pull request and observable desing    
-       Table now admits emojis 😀
+      -- Seriously I don't know how call this version because I fixed a lot of things
+      -- Update in database for all fields
+      -- Fix table for styles now it is one field
+      -- Event loop in front end to optimize pull request and observable desing    
+      -- Table now admits emojis 😀
  - version 1.8.9 
        Movemet is fixed at this frame, in other words, you can't move the note in other 
        width and height that the window
