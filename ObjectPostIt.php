@@ -5,25 +5,14 @@ class PostIt {
     private string $header;
     private string $text;
     private int $user;
-    private int $x;
-    private int $y;
-    private int $size;
+    private string $styles;
     
     public function __construct($id, $header, $text, $user, $size, $x, $y){
         $this->id = $id??0;
         $this->header = $header;
         $this->text = $text;
         $this->user = $user;
-        $this->size = $size;
-        $this->x = $x;
-        $this->y = $y;
-    }
-
-    public function getY(): int {
-        return $this->y;
-    }
-    public function getX(){
-        return $this->x;   
+        $this->styles = "width: $size; left:$x; top:$y;";
     }
     public function getId(): int {
         return $this->id;
@@ -40,19 +29,7 @@ class PostIt {
     public function getUser(): int {
         return $this->user;
     }
-
-    public function getSize(): int {
-        return $this->size;
-    }
-
-    public function set_x (int $x){
-        $this->x = $x;
-    }
-
-    public function set_y(int $y){
-        $this->y = $y;
-    }
-
+    
     public function set_header(string $header) :void{
         $this->header = $header;
     }
@@ -74,9 +51,7 @@ class PostIt {
             'header'=> $this->header,
             'innertext'=> $this->text,
             'user' => $this->user,
-            'size'=> $this->size, 
-            'x' => $this->x,
-            'y' => $this->y
+            'styles' => $this->styles
         ];
     }
 

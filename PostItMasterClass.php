@@ -50,19 +50,15 @@ class PostItManager {
     private array $mysqlMap = [
         'header' => 's',
         'innertext' => 's',
-        'size' => 'd',
         'user' => 'd',
-        'x' => 'd',
-        'y' => 'd'
+        'styles' => 's'
     ];
 
     private array $pdoMap = [
         'header' => PDO::PARAM_STR,
         'innertext' => PDO::PARAM_STR,
-        'size' => PDO::PARAM_INT,
         'user' => PDO::PARAM_INT,
-        'x' => PDO::PARAM_INT,
-        'y' => PDO::PARAM_INT
+        'styles' => PDO::PARAM_INT
     ];
 
     private string $dbtype;
@@ -187,7 +183,7 @@ class PostItManager {
     public function insertNote(){
         $firstNote = new PostIt(0, "This is a title!!",  "Hello! I\'m a cute note 😂", $this->user, 300, 0, 0);
         if($this->dbtype === 'PDO'){
-            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user, x , y) VALUES (:header , :innertext, :size , :user, :x, :y)');
+            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, styles, user) VALUES (:header , :innertext, :styles , :user)');
             foreach($firstNote->getAll() as $key=>$value){                
                 if($key!='id'){
                     $stmt->bindValue(':'.$key, $value, $this->pdoMap[$key]);
@@ -197,15 +193,17 @@ class PostItManager {
         }
         if($this->dbtype === 'mysqli'){
             $stmt = $this->db->stmt_init();
-            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, size, user, x, y) VALUES (?,?,?,?,?,?)');
+            $stmt = $this->db->prepare('INSERT INTO post_it (header, innertext, user, styles) VALUES (?,?,?,?)');
             $params = $firstNote->getAll();
-            $stmt->bind_param($this->mysqlMapCalculator($params), $params['header'], $params['innertext'], $params['size'], $params['user'], $params['x'], $params['y']);
+            $stmt->bind_param($this->mysqlMapCalculator($params), $params['header'], $params['innertext'], $params['user'], $params['styles']);
             $stmt->execute();
         }
         $this->userHasNote();
     }
 
-
+    /**
+     * @method string mysqliMapCalculator a way to get the correct bind params for inserts, and updates
+     */
     private function mysqlMapCalculator(array $params):string{
         $map_return = '';
         foreach(array_keys($params) as $map){
@@ -223,7 +221,7 @@ class PostItManager {
         $firstNote = ($k!=0)?'<p class="delete">Bin</p>':'';
         $html = 
         '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" data-move="false"
-        style="top: '.$postIt->y.'px; left:'.$postIt->x.'px; z-index:'.($postIt->id*1000).'">
+        style="'.$postIt->styles.'">
             <div class="post-it-window">
                 '.$firstNote.'
                 <p class="add">+</p>
@@ -245,14 +243,25 @@ class PostItManager {
      *  @method void updateNote() a method that allows you modify the notes
      */
     public function updateNote(array $params):void{
-        /**
-         * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
-         */
+        [$id_fields, $update_field] = array_keys($params);
+        if($this->dbtype === 'PDO' && $this->validateNote($params['id'])){
+            $stmt = $this->db->prepare('UPDATE post_it SET '.$update_field.' = :'.$update_field.' where id = :id ');
+            $stmt->bindValue(':id', $params['id'], PDO::PARAM_INT);
+            $stmt->bindValue(':'.$update_field, $params[$update_field]);
+            $stmt->execute();
+        }
+        if($this->dbtype === 'mysqli' && $this->validateNote($params['id'])){
+            $stmt = $this->db->stmt_init();
+            $stmt = $this->db->prepare('UPDATE post_it SET '.$update_field.' = ? where id = ? ');
+            $stmt->bind_param('s', $params[$update_field]);
+            $stmt->bind_param('d', $params['id']);
+            
+            $stmt->execute();
+        }
+        $this->userHasNote();
+        
     }
     public function deleteNote(int $id_note):void{
-        /**
-         * Esta va a tener la función de obtener los parámetros de la nota y de ahí meterla en la base de datos
-         */
         if($this->dbtype === 'PDO' && $this->validateNote($id_note)){
             $stmt = $this->db->prepare('DELETE FROM post_it where id = :id ');
             $stmt->bindValue(':id', $id_note, $this->pdoMap['id']);
@@ -276,6 +285,13 @@ class PostItManager {
      */
     public function jsonMode():string{
         return json_encode($this->postItList);
+    }
+
+    /**
+     * @method void debugger a convinient way to debug php problems
+     */
+    public function debugger(array $params){
+        echo '<pre>'; print_r($params); echo '</pre>';
     }
 
 }
