@@ -6,11 +6,13 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
     let endlimitX = window.innerWidth;
     let endlimitY =  window.innerHeight;
     let allEvents = [];
+
     window.addEventListener('resize', ()=>{
         endlimitX = window.innerWidth;
         endlimitY = window.innerHeight;
-        console.log({endlimitX, endlimitY})
     })
+
+   
     /**
      * Event loop system
      */
@@ -49,6 +51,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         }
       })                                  
     const posts = document.querySelectorAll('.post-it-window');
+    
     //const postsContainer = document.querySelector('.post-it').parentElement;
         /**
          * Events that I am still working:
@@ -75,7 +78,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     x = e.clientX-startX-10;
                     y = e.clientY-startY-10;
                     post.parentElement.style.left = x+'px';
-                    post.parentElement.style.top = y+'px';     
+                    post.parentElement.style.top = y+'px';
                     if(x < startlimitX) post.parentElement.style.left = '0px';     
                     if(y < startlimitY) post.parentElement.style.top = '0px';     
                     if(x > endlimitX-post.parentElement.style.width.replace('px', '')) post.parentElement.style.left = endlimitX-parseInt(post.parentElement.style.width.replace('px', ''))+'px';     
@@ -120,6 +123,22 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
            post.addEventListener('mousedown', startDrag);
            window.addEventListener('mouseup', stopDrag);
            window.addEventListener('mousemove', drag);
+           post.parentElement.addEventListener('keyup', (e)=>{
+            let id = e.target.parentElement.parentElement.dataset.id;
+            let innertext = '';
+            let header = '';
+            let styles = '';
+            if(e.key == 'Control' && e.target.tagName == 'H4'){
+                header = e.target.innerText;
+                allEvents.push({id, innertext, header, styles})
+                
+            }
+            if(e.key == 'Control' && e.target.tagName == 'P'){
+                innertext = e.target.innerText;
+                allEvents.push({id, innertext, header, styles})
+                
+            }
+           })
            // Event whose function is alterete notes, like minimaze, add more notes, delete notes, or make it invisible
            if(post.children.length == 4){
             post.children[0].addEventListener('click', remove);
