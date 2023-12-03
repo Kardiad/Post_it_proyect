@@ -102,6 +102,6 @@ it's true you can get all html and if it is false you recive a JSON with all not
       Fix close option
  ## Wishlist or objectives comming soon
   
- - Options with rightclick
+ - change font color
+ - make styles like list or something like that
  - add images
- - Customize color or background    

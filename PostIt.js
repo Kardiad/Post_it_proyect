@@ -6,6 +6,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
     let endlimitX = window.innerWidth;
     let endlimitY =  window.innerHeight;
     let allEvents = [];
+    const posts = document.querySelectorAll('.post-it-window');
 
     window.addEventListener('resize', ()=>{
         endlimitX = window.innerWidth;
@@ -64,99 +65,93 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             allEvents.push({id, innertext, header, styles})
         }
       })                                  
-    const posts = document.querySelectorAll('.post-it-window');
     
-    //const postsContainer = document.querySelector('.post-it').parentElement;
-        /**
-         * Events that I am still working:
-         *  1º Walls, the notes can't pass though the limits of navigator, it is important to don't lose the first note, or other that you don't want anymore
-         *  2º Scrollin, if you scrolling down, the notes movement will alterated. My first aproximation is paginate the window and set the correct offset
-         */
-        for(const [i, post] of posts.entries()){
-            let startX = 0;
-            let startY = 0;
-            let isDragging = false;
-            function startDrag(e) {  
-                e.stopPropagation();
-                e.preventDefault();
-                if(post.parentElement.style.top == '0px' || post.parentElement.style.left == '0px' ){
-                    startX =post.parentElement.getBoundingClientRect().x;
-                    startY =post.parentElement.getBoundingClientRect().y;
-                }
-                isDragging = true;
+    for(const [i, post] of posts.entries()){
+        let startX = 0;
+        let startY = 0;
+        let isDragging = false;
+        function startDrag(e) {  
+            e.stopPropagation();
+            e.preventDefault();
+            if(post.parentElement.style.top == '0px' 
+                || post.parentElement.style.left == '0px' ){
+                startX =post.parentElement.getBoundingClientRect().x;
+                startY =post.parentElement.getBoundingClientRect().y;
             }
-            function drag(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                if (isDragging) {
-                    x = e.clientX-startX-10;
-                    y = e.clientY-startY-10;
-                    post.parentElement.style.left = x+'px';
-                    post.parentElement.style.top = y+'px';
-                    if(x < startlimitX) post.parentElement.style.left = '0px';     
-                    if(y < startlimitY) post.parentElement.style.top = '0px';     
-                    if(x > endlimitX-post.parentElement.style.width.replace('px', '')) post.parentElement.style.left = endlimitX-parseInt(post.parentElement.style.width.replace('px', ''))+'px';     
-                    if(y > endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))) post.parentElement.style.top = endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))+'px';          
-                }
+            isDragging = true;
+        }
+        function drag(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (isDragging) {
+                x = e.clientX-startX-10;
+                y = e.clientY-startY-10;
+                post.parentElement.style.left = x+'px';
+                post.parentElement.style.top = y+'px';
+                if(x < startlimitX) post.parentElement.style.left = '0px';     
+                if(y < startlimitY) post.parentElement.style.top = '0px';     
+                if(x > endlimitX-post.parentElement.style.width.replace('px', '')) post.parentElement.style.left = endlimitX-parseInt(post.parentElement.style.width.replace('px', ''))+'px';     
+                if(y > endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))) post.parentElement.style.top = endlimitY-parseInt(post.parentElement.style.height.replace('px', ''))+'px';          
             }
-            function stopDrag(e) { 
-                e.stopPropagation();
-                e.preventDefault();
-                isDragging = false;
+        }
+        function stopDrag(e) { 
+            e.stopPropagation();
+            e.preventDefault();
+            isDragging = false;
+        }
+
+        function minimize () {
+            post.parentElement.style.height = '2.5rem';
+        }
+
+        function close (ev) {
+            post.parentElement.remove();
+        }
+
+        async function add(e){
+            const conn = await fetch(url+'/addNote');
+            const json = await conn.json();
+            if(json.status == 200){
+                window.location.reload();
             }
-    
-            function minimize () {
-                post.parentElement.style.height = '2.5rem';
+        }
+        async function remove(e){
+            const form = new FormData();
+            form.append('id', post.parentElement.dataset.id);
+            const conn = await fetch(url+'/removeNote',{
+                method: "POST",
+                body: form
+            });
+            const json = await conn.json();
+            if(json.status == 200){
+                window.location.reload();                    
             }
-    
-            function close (ev) {
-                post.parentElement.remove();
-            }
-    
-            async function add(e){
-                const conn = await fetch(url+'/addNote');
-                const json = await conn.json();
-                if(json.status == 200){
-                    window.location.reload();
-                }
-            }
-            async function remove(e){
-                const form = new FormData();
-                form.append('id', post.parentElement.dataset.id);
-                const conn = await fetch(url+'/removeNote',{
-                    method: "POST",
-                    body: form
-                });
-                const json = await conn.json();
-                if(json.status == 200){
-                    window.location.reload();                    
-                }
-            }
-            post.addEventListener('dblclick', (e)=>{
-                const arrayChildren = [... post.children]
-                if(!arrayChildren.some((e)=>e.type=='color')){
-                    const color = document.createElement('input');
-                    color.type = "color";
-                    color.id="color";
-                    color.style.width = '2rem'
-                    color.style.height = '2.5rem'
-                    color.style.border = '0px'
-                    color.style.padding = '0px'
-                    color.value = post.parentElement.style.backgroundColor;
-                    color.dataset.id = post.parentElement.dataset.id;
+        }
+        post.addEventListener('dblclick', (e)=>{
+            const arrayChildren = [... post.children]
+            if(!arrayChildren.some((e)=>e.type=='color')){
+                const color = document.createElement('input');
+                color.type = "color";
+                color.id="color";
+                color.style.width = '2rem'
+                color.style.height = '2.5rem'
+                color.style.border = '0px'
+                color.style.padding = '0px'
+                color.value = post.parentElement.style.backgroundColor;
+                color.dataset.id = post.parentElement.dataset.id;
+                color.style.backgroundColor = post.parentElement.style.backgroundColor;
+                post.appendChild(color)
+                color.addEventListener('change', (ev)=>{
+                    post.parentElement.style.backgroundColor = ev.target.value;
                     color.style.backgroundColor = post.parentElement.style.backgroundColor;
-                    post.appendChild(color)
-                    color.addEventListener('change', (ev)=>{
-                        post.parentElement.style.backgroundColor = ev.target.value;
-                        color.style.backgroundColor = post.parentElement.style.backgroundColor;
-                    })
-                }
-            })
-            // Events whose function is move the notes
-           post.addEventListener('mousedown', startDrag);
-           window.addEventListener('mouseup', stopDrag);
-           window.addEventListener('mousemove', drag);
-           post.parentElement.addEventListener('keyup', (e)=>{
+                })
+            }
+        })
+        // Events whose function is move the notes
+        post.addEventListener('mousedown', startDrag);
+        window.addEventListener('mouseup', stopDrag);
+        window.addEventListener('mousemove', drag);
+        post.parentElement.addEventListener('keyup', (e)=>{
             let id = e.target.parentElement.parentElement.dataset.id;
             let innertext = '';
             let header = '';
@@ -169,28 +164,28 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 innertext = e.target.innerText;
                 allEvents.push({id, innertext, header, styles})
             }
-           })
-           // Event whose function is alterete notes, like minimaze, add more notes, delete notes, or make it invisible
-           if(post.children.length == 4){
+        })
+        // Event whose function is alterete notes, like minimaze, add more notes, delete notes, or make it invisible
+        if(post.children.length == 4){
             post.children[0].addEventListener('click', remove);
             post.children[1].addEventListener('click', add);
             post.children[3].addEventListener('click', close);
             post.children[2].addEventListener('click', minimize);
-           }else{
-               post.children[0].addEventListener('click', add);
-               post.children[2].addEventListener('click', close);
-               post.children[1].addEventListener('click', minimize);
-           }
-            //Add postit to event loop, because the observer will add all internal events in a list where every 2 seconds 
-            //emits to backend if the list change its size
-            osberver.observe(post.parentElement, {
-                attributes: true,
-                childList : true,
-                characterData : true,
-                subtree : true,
-                attributeOldValue : true,
-                characterDataOldValue : true,
-                attributeFilter : ['tagName','style', 'innerText', 'nodeText'],
-            });
+        }else{
+            post.children[0].addEventListener('click', add);
+            post.children[2].addEventListener('click', close);
+            post.children[1].addEventListener('click', minimize);
         }
-    })  
+        //Add postit to event loop, because the observer will add all internal events in a list where every 2 seconds 
+        //emits to backend if the list change its size
+        osberver.observe(post.parentElement, {
+            attributes: true,
+            childList : true,
+            characterData : true,
+            subtree : true,
+            attributeOldValue : true,
+            characterDataOldValue : true,
+            attributeFilter : ['tagName','style', 'innerText', 'nodeText'],
+        });
+    }
+})  
