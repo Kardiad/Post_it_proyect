@@ -21,7 +21,6 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         if(allEvents.length>0 && actualEvents == allEvents.length){
             const event = allEvents.pop();
             const body = new FormData();
-            console.log(event)
             body.append('event', JSON.stringify(event))
             await fetch(url+'/editNote', {method: 'POST', body: body}).catch(err=>{
                 console.error(err); 
@@ -39,16 +38,18 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             if(e.type == "characterData" && e.target!="\"\"" && e.target.parentNode!=null && e.target.parentNode.tagName=='H4'){
                 header = e.target.textContent.trim();
                 id = e.target.parentElement.parentElement.parentElement.dataset.id;    
+                allEvents.push({id, innertext, header, styles})
             }
             if(e.type == "characterData" && e.target!="\"\"" && e.target.parentNode!=null && e.target.parentNode.tagName=='P'){
                 innertext = e.target.textContent.trim();
                 id = e.target.parentElement.parentElement.parentElement.dataset.id;               
+                allEvents.push({id, innertext, header, styles})
             }
-            if(e.type == 'attributes'){
+            if(e.type == 'attributes' && e.target.tagName=='DIV'){
                 styles = e.target.attributes.style.textContent;
                 id = e.target.dataset.id;
+                allEvents.push({id, innertext, header, styles})
             }
-            allEvents.push({id, innertext, header, styles})
         }
       })                                  
     const posts = document.querySelectorAll('.post-it-window');
@@ -110,7 +111,6 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             async function remove(e){
                 const form = new FormData();
                 form.append('id', post.parentElement.dataset.id);
-                console.log(post.parentElement.dataset.id);
                 const conn = await fetch(url+'/removeNote',{
                     method: "POST",
                     body: form
@@ -126,11 +126,15 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     const color = document.createElement('input');
                     color.type = "color";
                     color.id="color";
+                    color.style.width = '1.5rem'
+                    color.style.border = '0px'
+                    color.style.padding = '0px'
+                    color.dataset.id = post.parentElement.dataset.id;
+                    color.style.backgroundColor = post.parentElement.style.backgroundColor;
                     post.appendChild(color)
                     color.addEventListener('change', (ev)=>{
-                        console.log(ev.target.value)
-                        console.log(post.parentElement.children[1]);
                         post.parentElement.style.backgroundColor = ev.target.value;
+                        color.style.backgroundColor = post.parentElement.style.backgroundColor;
                     })
                 }
             })
