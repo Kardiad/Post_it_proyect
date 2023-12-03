@@ -38,6 +38,8 @@ include_once './ObjectPostIt.php';
  *      Basic copy paste implements
  * @version 1.10.9
  *      Now you can change color to notes using doubleclick 😁
+ * @version 1.10.10
+ *      Fix problems with color selector
  * ==================================================================================
  *                                      WISHLIST
  * ==================================================================================

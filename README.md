@@ -92,6 +92,10 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Basic copy paste implements
  - version 1.10.9
        Now you can change color to notes 😁 pressing doubleclick in window
+ - version 1.10.10
+       Fix problems with color selector, now works properly
+ - version 1.10.11
+      Fix problems with copy pasting
  ## Wishlist or objectives comming soon
   
  - Options with rightclick

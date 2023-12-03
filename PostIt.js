@@ -12,6 +12,13 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         endlimitY = window.innerHeight;
     })
 
+    const validateHead = (e) =>{
+        return e.type == "characterData" && e.target!="\"\"" && e.target.textContent!="" && e.target.parentNode!=null && e.target.parentNode.tagName=='H4';
+    } 
+
+    const validateBody = (e) =>{
+        return e.type == "characterData" && e.target!="\"\"" && e.target.textContent!="" && e.target.parentNode!=null && e.target.parentNode.tagName=='P';
+    }
    
     /**
      * Event loop system
@@ -20,14 +27,18 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         const actualEvents = allEvents.length;
         if(allEvents.length>0 && actualEvents == allEvents.length){
             const event = allEvents.pop();
+            console.log(event)
             const body = new FormData();
             body.append('event', JSON.stringify(event))
-            await fetch(url+'/editNote', {method: 'POST', body: body}).catch(err=>{
+            await fetch(url+'/editNote', {method: 'POST', body: body})
+            .then(res=>{
+                allEvents = [];
+            })
+            .catch(err=>{
                 console.error(err); 
                 allEvents=[]});
-            allEvents = [];
         }
-    }, 2000);
+    }, 1000);
     //Observer have one mission that is mdeling the data of every event which concerns at text, size and postion modification
     const osberver =  new MutationObserver((ev)=>{
         for(let e of ev){
@@ -35,21 +46,22 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             let innertext = '';
             let header = '';
             let styles = '';
-            if(e.type == "characterData" && e.target!="\"\"" && e.target.parentNode!=null && e.target.parentNode.tagName=='H4'){
+            if(validateHead(e)){
                 header = e.target.textContent.trim();
                 id = e.target.parentElement.parentElement.parentElement.dataset.id;    
-                allEvents.push({id, innertext, header, styles})
+                
             }
-            if(e.type == "characterData" && e.target!="\"\"" && e.target.parentNode!=null && e.target.parentNode.tagName=='P'){
+            if(validateBody(e)){
                 innertext = e.target.textContent.trim();
                 id = e.target.parentElement.parentElement.parentElement.dataset.id;               
-                allEvents.push({id, innertext, header, styles})
+                
             }
             if(e.type == 'attributes' && e.target.tagName=='DIV'){
                 styles = e.target.attributes.style.textContent;
                 id = e.target.dataset.id;
-                allEvents.push({id, innertext, header, styles})
+                
             }
+            allEvents.push({id, innertext, header, styles})
         }
       })                                  
     const posts = document.querySelectorAll('.post-it-window');
@@ -129,6 +141,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     color.style.width = '1.5rem'
                     color.style.border = '0px'
                     color.style.padding = '0px'
+                    color.value = post.parentElement.style.backgroundColor;
                     color.dataset.id = post.parentElement.dataset.id;
                     color.style.backgroundColor = post.parentElement.style.backgroundColor;
                     post.appendChild(color)
@@ -149,11 +162,12 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             let styles = '';
             if(e.key == 'Control' && e.target.tagName == 'H4' && e.target.innerText.length<100){
                 header = e.target.innerText;         
+                allEvents.push({id, innertext, header, styles})
             }
             if(e.key == 'Control' && e.target.tagName == 'P'){
                 innertext = e.target.innerText;
+                allEvents.push({id, innertext, header, styles})
             }
-            allEvents.push({id, innertext, header, styles})
            })
            // Event whose function is alterete notes, like minimaze, add more notes, delete notes, or make it invisible
            if(post.children.length == 4){
