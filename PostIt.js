@@ -105,8 +105,8 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                 isDragging = false;
             }
     
-            function minimize (ev) {
-                ev.target.parentElement.parentElement.style.height = '1.5rem';
+            function minimize () {
+                post.parentElement.style.height = '2.5rem';
             }
     
             function close (ev) {
@@ -138,7 +138,8 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     const color = document.createElement('input');
                     color.type = "color";
                     color.id="color";
-                    color.style.width = '1.5rem'
+                    color.style.width = '2rem'
+                    color.style.height = '2.5rem'
                     color.style.border = '0px'
                     color.style.padding = '0px'
                     color.value = post.parentElement.style.backgroundColor;

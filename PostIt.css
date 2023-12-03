@@ -20,24 +20,38 @@
 
 .post-it .child-node h4 {
     text-align: center;
+    height: fit-content;
     word-wrap: break-word;
+    font-size: 2rem;
 }
 
 .post-it .child-node p {
-    height: 60%;
+    height: 90%;
     width: fit-content(90%);
     margin: auto;
     padding: 1rem;
     word-wrap: break-word;
+    font-size: 1.5rem;
 }
 
-.post-it .close, .post-it .minimize, .post-it .add, .post-it .delete, .post-it .color {
-    width: 1rem;
+.post-it .close, .post-it .minimize, .post-it .add, .post-it .delete {
+    width: 2rem;
     cursor: pointer;
     padding: 5px;
+    padding-bottom: 0px;
     margin: 0px;
     text-align: center;
+    transition: background-color, 1s;
 }
+
+.post-it .close:hover, .post-it .minimize:hover, .post-it .add:hover, .post-it .delete:hover{
+    background-color: yellow;
+}
+
+.post-it .close img, .post-it .minimize img, .post-it .add img, .post-it .delete img{
+    width: 2rem;
+}
+
 .post-it::-webkit-scrollbar {
     width: 1em;
 }

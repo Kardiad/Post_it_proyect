@@ -40,6 +40,10 @@ include_once './ObjectPostIt.php';
  *      Now you can change color to notes using doubleclick 😁
  * @version 1.10.10
  *      Fix problems with color selector
+ * @version 1.10.11
+ *      Fix problems with copy pasting
+ * @version 1.11.11
+ *      Improvements with notes styles and usability issues
  * ==================================================================================
  *                                      WISHLIST
  * ==================================================================================
@@ -238,14 +242,14 @@ class PostItManager {
      *  @method void generateHTML() the template
      */
     public function generateHTML($postIt, int $k, bool $backRender){
-        $note = ($k!=0)?'<p class="delete">Bin</p>':'';
+        $note = ($k!=0)?'<p class="delete"><img src="./bin.png"></p>':'';
         $html = 
         '<div class="post-it" data-id="'.$postIt->id.'" data-user="'.$postIt->user.'" style="'.$postIt->styles.'">
             <div class="post-it-window">
                 '.$note.'
-                <p class="add">+</p>
-                <p class="minimize">-</p>
-                <p class="close">X</p>
+                <p class="add"><img src="./add.png"></p>
+                <p class="minimize"><img src="./minimize.png"></p>
+                <p class="close"><img src="./close.png"></p>
             </div>
             <div class="child-node">
                 <h4 contenteditable="true"> '.$postIt->header.' </h4>

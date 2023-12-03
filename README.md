@@ -96,6 +96,8 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Fix problems with color selector, now works properly
  - version 1.10.11
       Fix problems with copy pasting
+ - version 1.11.11
+      Improvements with notes styles and usability issues
  ## Wishlist or objectives comming soon
   
  - Options with rightclick
