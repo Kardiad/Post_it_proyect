@@ -149,6 +149,14 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         })
         // Events whose function is move the notes
         post.addEventListener('mousedown', startDrag);
+        post.parentElement.children[1].children[0].addEventListener('contextmenu', (e)=>{
+            e.preventDefault()
+            //here will be text edition options in header
+        })
+        post.parentElement.children[1].children[1].addEventListener('contextmenu', (e)=>{
+            e.preventDefault()
+            //here will be text edition options in body
+        })
         window.addEventListener('mouseup', stopDrag);
         window.addEventListener('mousemove', drag);
         post.parentElement.addEventListener('keyup', (e)=>{
