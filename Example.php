@@ -3,7 +3,7 @@
 require_once './PostItMasterClass.php';
 $connexion =  new PDO("mysql:host=localhost;dbname=test;port=3306;charset=utf8mb4", "root" , "");
 $connexion2 = new mysqli('localhost', 'root', '', 'test', 3306);
-$posit = new PostItManager($connexion, "test", 1);
+$posit = new PostItManager($connexion2, "test", 1);
 $url_divider = explode('/', $_SERVER['PHP_SELF']);
 $action = $url_divider[count($url_divider)-1];
 switch($action){

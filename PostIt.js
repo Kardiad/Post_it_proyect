@@ -21,13 +21,14 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
         if(allEvents.length>0 && actualEvents == allEvents.length){
             const event = allEvents.pop();
             const body = new FormData();
+            console.log(event)
             body.append('event', JSON.stringify(event))
             await fetch(url+'/editNote', {method: 'POST', body: body}).catch(err=>{
                 console.error(err); 
                 allEvents=[]});
             allEvents = [];
         }
-    }, 1000);
+    }, 2000);
     //Observer have one mission that is mdeling the data of every event which concerns at text, size and postion modification
     const osberver =  new MutationObserver((ev)=>{
         for(let e of ev){
@@ -119,6 +120,20 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
                     window.location.reload();                    
                 }
             }
+            post.addEventListener('dblclick', (e)=>{
+                const arrayChildren = [... post.children]
+                if(!arrayChildren.some((e)=>e.type=='color')){
+                    const color = document.createElement('input');
+                    color.type = "color";
+                    color.id="color";
+                    post.appendChild(color)
+                    color.addEventListener('change', (ev)=>{
+                        console.log(ev.target.value)
+                        console.log(post.parentElement.children[1]);
+                        post.parentElement.style.backgroundColor = ev.target.value;
+                    })
+                }
+            })
             // Events whose function is move the notes
            post.addEventListener('mousedown', startDrag);
            window.addEventListener('mouseup', stopDrag);
@@ -128,16 +143,13 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             let innertext = '';
             let header = '';
             let styles = '';
-            if(e.key == 'Control' && e.target.tagName == 'H4'){
-                header = e.target.innerText;
-                allEvents.push({id, innertext, header, styles})
-                
+            if(e.key == 'Control' && e.target.tagName == 'H4' && e.target.innerText.length<100){
+                header = e.target.innerText;         
             }
             if(e.key == 'Control' && e.target.tagName == 'P'){
                 innertext = e.target.innerText;
-                allEvents.push({id, innertext, header, styles})
-                
             }
+            allEvents.push({id, innertext, header, styles})
            })
            // Event whose function is alterete notes, like minimaze, add more notes, delete notes, or make it invisible
            if(post.children.length == 4){

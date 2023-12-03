@@ -34,10 +34,13 @@ include_once './ObjectPostIt.php';
  * @version 1.8.9 
  *      Movemet is fixed at this frame, in other words, you can't move the note in other 
  *      width and height that the window
+ * @version 1.9.9
+ *      Basic copy paste implements
+ * @version 1.10.9
+ *      Now you can change color to notes using doubleclick 😁
  * ==================================================================================
  *                                      WISHLIST
  * ==================================================================================
- *  1º Paste pressing ctr + v 
  *  2º Options with rightclick
  *      2.1 -> add images
  *      2.2 -> paste text
@@ -267,9 +270,7 @@ class PostItManager {
         if($this->dbtype === 'mysqli' && $this->validateNote($params['id'])){
             $stmt = $this->db->stmt_init();
             $stmt = $this->db->prepare('UPDATE post_it SET '.$update_field.' = ? where id = ? ');
-            $stmt->bind_param('s', $params[$update_field]);
-            $stmt->bind_param('d', $params['id']);
-            
+            $stmt->bind_param('sd', $params[$update_field], $params['id']);            
             $stmt->execute();
         }
         $this->userHasNote();

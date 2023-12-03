@@ -90,7 +90,8 @@ it's true you can get all html and if it is false you recive a JSON with all not
        Movemet is fixed at frame, in other words, you can't move the over the window
  - version 1.9.9 
        Basic copy paste implements
-  
+ - version 1.10.9
+       Now you can change color to notes 😁 pressing doubleclick in window
  ## Wishlist or objectives comming soon
   
  - Options with rightclick

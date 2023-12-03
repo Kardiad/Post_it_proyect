@@ -10,6 +10,7 @@
 .post-it-window{
     display: flex;
     justify-content: end;
+    gap : 2%;
     background-color: brown;
 }
 .post-it .child-node {
@@ -33,8 +34,9 @@
 .post-it .close, .post-it .minimize, .post-it .add, .post-it .delete, .post-it .color {
     width: 1rem;
     cursor: pointer;
-    padding: 7px;
+    padding: 5px;
     margin: 0px;
+    text-align: center;
 }
 .post-it::-webkit-scrollbar {
     width: 1em;
