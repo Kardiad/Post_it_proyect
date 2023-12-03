@@ -44,6 +44,8 @@ include_once './ObjectPostIt.php';
  *      Fix problems with copy pasting
  * @version 1.11.11
  *      Improvements with notes styles and usability issues
+ * @version 1.11.12
+ *      Fix close option
  * ==================================================================================
  *                                      WISHLIST
  * ==================================================================================

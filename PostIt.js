@@ -110,7 +110,7 @@ window.addEventListener("DOMContentLoaded", (ev)=>{
             }
     
             function close (ev) {
-                ev.target.parentElement.parentElement.remove();
+                post.parentElement.remove();
             }
     
             async function add(e){

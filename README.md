@@ -98,6 +98,8 @@ it's true you can get all html and if it is false you recive a JSON with all not
       Fix problems with copy pasting
  - version 1.11.11
       Improvements with notes styles and usability issues
+ - version 1.11.12
+      Fix close option
  ## Wishlist or objectives comming soon
   
  - Options with rightclick
